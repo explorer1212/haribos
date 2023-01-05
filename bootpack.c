@@ -6,7 +6,7 @@
 void HariMain(void)
 {
 	struct BOOTINFO *binfo = (struct BOOTINFO *) ADR_BOOTINFO;
-	char s[40], keybuf[32], mousebuf[128];
+	char s[40], keybuf[32], mousebuf[128]; /* buffer of key && mouse respectively */
 	int mx, my, i;
 	unsigned int memtotal;
 	struct MOUSE_DEC mdec;
@@ -17,11 +17,11 @@ void HariMain(void)
 
 	init_gdtidt();
 	init_pic();
-	io_sti(); /* IDT/PICの初期化が終わったのでCPUの割り込み禁止を解除 */
+	io_sti(); /* IDT/PIC的初始化已?完成，?中断 */
 	fifo8_init(&keyfifo, 32, keybuf);
 	fifo8_init(&mousefifo, 128, mousebuf);
-	io_out8(PIC0_IMR, 0xf9); /* PIC1とキーボードを許可(11111001) */
-	io_out8(PIC1_IMR, 0xef); /* マウスを許可(11101111) */
+	io_out8(PIC0_IMR, 0xf9); /* 打?PIC1和??中断(11111001) */
+	io_out8(PIC1_IMR, 0xef); /* 打?鼠?中断(11101111) */
 
 	init_keyboard();
 	enable_mouse(&mdec);
@@ -70,33 +70,22 @@ void HariMain(void)
 				if (mouse_decode(&mdec, i) != 0) {
 					/* データが3バイト揃ったので表示 */
 					sprintf(s, "[lcr %4d %4d]", mdec.x, mdec.y);
-					if ((mdec.btn & 0x01) != 0) {
-						s[1] = 'L';
-					}
-					if ((mdec.btn & 0x02) != 0) {
-						s[3] = 'R';
-					}
-					if ((mdec.btn & 0x04) != 0) {
-						s[2] = 'C';
-					}
+
+					if ((mdec.btn & 0x01) != 0) { s[1] = 'L'; }
+					if ((mdec.btn & 0x02) != 0) { s[3] = 'R'; }
+					if ((mdec.btn & 0x04) != 0) { s[2] = 'C'; }
+
 					boxfill8(buf_back, binfo->scrnx, COL8_008484, 32, 16, 32 + 15 * 8 - 1, 31);
 					putfonts8_asc(buf_back, binfo->scrnx, 32, 16, COL8_FFFFFF, s);
 					sheet_refresh(shtctl, sht_back, 32, 16, 32 + 15 * 8, 32);
-					/* マウスカーソルの移動 */
 					mx += mdec.x;
 					my += mdec.y;
-					if (mx < 0) {
-						mx = 0;
-					}
-					if (my < 0) {
-						my = 0;
-					}
-					if (mx > binfo->scrnx - 16) {
-						mx = binfo->scrnx - 16;
-					}
-					if (my > binfo->scrny - 16) {
-						my = binfo->scrny - 16;
-					}
+					
+					if (mx < 0) { mx = 0; }
+					if (my < 0) { my = 0; }
+					if (mx > binfo->scrnx - 16) { mx = binfo->scrnx - 16; }
+					if (my > binfo->scrny - 16) { my = binfo->scrny - 16; }
+
 					sprintf(s, "(%3d, %3d)", mx, my);
 					boxfill8(buf_back, binfo->scrnx, COL8_008484, 0, 0, 79, 15); /* 座標消す */
 					putfonts8_asc(buf_back, binfo->scrnx, 0, 0, COL8_FFFFFF, s); /* 座標書く */

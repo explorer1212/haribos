@@ -1,10 +1,10 @@
 /* asmhead.nas */
-struct BOOTINFO { /* 0x0ff0-0x0fff */
-	char cyls; /* �u�[�g�Z�N�^�͂ǂ��܂Ńf�B�X�N��ǂ񂾂̂� */
-	char leds; /* �u�[�g���̃L�[�{�[�h��LED�̏�� */
-	char vmode; /* �r�f�I���[�h  ���r�b�g�J���[�� */
+struct BOOTINFO { 
+	char cyls; 
+	char leds; 
+	char vmode;
 	char reserve;
-	short scrnx, scrny; /* ��ʉ𑜓x */
+	short scrnx, scrny; 
 	char *vram;
 };
 #define ADR_BOOTINFO	0x00000ff0
@@ -123,12 +123,12 @@ int mouse_decode(struct MOUSE_DEC *mdec, unsigned char dat);
 extern struct FIFO8 mousefifo;
 
 /* memory.c */
-#define MEMMAN_FREES		4090	/* ����Ŗ�32KB */
+#define MEMMAN_FREES		4090	
 #define MEMMAN_ADDR			0x003c0000
-struct FREEINFO {	/* ������� */
+struct FREEINFO {	
 	unsigned int addr, size;
 };
-struct MEMMAN {		/* �������Ǘ� */
+struct MEMMAN {		
 	int frees, maxfrees, lostsize, losts;
 	struct FREEINFO free[MEMMAN_FREES];
 };
