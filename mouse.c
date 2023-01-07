@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-01-03 13:45:12
- * @LastEditTime: 2023-01-07 17:03:33
+ * @LastEditTime: 2023-01-07 19:32:46
  * @FilePath: \helloos0\mouse.c
  * @Description: 
  * 
@@ -16,7 +16,7 @@ void inthandler2c(int *esp)
 	io_out8(PIC1_OCW2, 0x64);	
 	io_out8(PIC0_OCW2, 0x62);	
 	data = io_in8(PORT_KEYDAT);
-	fifo32_put(&mousefifo, data + mousedata0);
+	fifo32_put(mousefifo, data + mousedata0);
 	return;
 }
 

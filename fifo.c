@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-01-03 13:45:12
- * @LastEditTime: 2023-01-07 17:00:14
+ * @LastEditTime: 2023-01-07 19:23:28
  * @FilePath: \helloos0\fifo.c
  * @Description: 
  * 
@@ -53,6 +53,9 @@ int fifo32_get(struct FIFO32 *fifo)
 		return -1;
 	}
 	data = fifo->buf[fifo->q];
+	// char *s;
+	// sprintf(s, "%03X", data);
+	// putfonts8_asc_sht(sht_back, 0, 16, COL8_FFFFFF, COL8_008484, s, 3);
 	fifo->q++;
 	if (fifo->q == fifo->size) {
 		fifo->q = 0;

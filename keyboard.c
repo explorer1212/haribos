@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-01-03 13:45:12
- * @LastEditTime: 2023-01-07 16:36:26
+ * @LastEditTime: 2023-01-07 19:32:55
  * @FilePath: \helloos0\keyboard.c
  * @Description: 
  * 
@@ -15,7 +15,7 @@ void inthandler21(int *esp)
 	int data;
 	io_out8(PIC0_OCW2, 0x61);	
 	data = io_in8(PORT_KEYDAT);
-	fifo32_put(&keyfifo, data + keydata0);
+	fifo32_put(keyfifo, data + keydata0);
 	return;
 }
 

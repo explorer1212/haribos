@@ -8,7 +8,6 @@ struct BOOTINFO {
 	char *vram;
 };
 #define ADR_BOOTINFO	0x00000ff0
-
 /* naskfunc.nas */
 void io_hlt(void);
 void io_cli(void);
@@ -109,7 +108,6 @@ void inthandler27(int *esp);
 void inthandler21(int *esp);
 void wait_KBC_sendready(void);
 void init_keyboard(struct FIFO32 *fifo, int data0);
-extern struct FIFO32 *keyfifo;
 #define PORT_KEYDAT		0x0060
 #define PORT_KEYCMD		0x0064
 
@@ -121,7 +119,6 @@ struct MOUSE_DEC {
 void inthandler2c(int *esp);
 void enable_mouse(struct FIFO32 *fifo, int data0, struct MOUSE_DEC *mdec);
 int mouse_decode(struct MOUSE_DEC *mdec, unsigned char dat);
-extern struct FIFO32 *mousefifo;
 
 /* memory.c */
 #define MEMMAN_FREES		4090	
@@ -167,13 +164,14 @@ void sheet_refreshmap(struct SHTCTL *ctl, int vx0, int vy0, int vx1, int vy1, in
 /* timer.c */
 #define MAX_TIMER	500
 struct TIMER {
+	struct TIMER *next;
 	unsigned int timeout, flags;
 	struct FIFO32 *fifo;
 	int data;
 };
 struct TIMERCTL {
-	unsigned int count, next, using;
-	struct TIMER *timers[MAX_TIMER]; /* ordered timer */
+	unsigned int count, next;
+	struct TIMER *t0; /* ordered timer */
 	struct TIMER timers0[MAX_TIMER];
 };
 extern struct TIMERCTL timerctl;
