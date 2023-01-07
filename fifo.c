@@ -1,8 +1,15 @@
+/*
+ * @Date: 2023-01-03 13:45:12
+ * @LastEditTime: 2023-01-07 17:00:14
+ * @FilePath: \helloos0\fifo.c
+ * @Description: 
+ * 
+ */
 #include "bootpack.h"
 
 #define FLAGS_OVERRUN		0x0001
 
-void fifo8_init(struct FIFO8 *fifo, int size, unsigned char *buf)
+void fifo32_init(struct FIFO32 *fifo, int size, int *buf)
 {
 	fifo->size = size;
 	fifo->buf = buf;
@@ -19,14 +26,14 @@ void fifo8_init(struct FIFO8 *fifo, int size, unsigned char *buf)
  * @param {unsigned char} data
  * @return {*}
  */
-int fifo8_put(struct FIFO8 *fifo, unsigned char data)
+int fifo32_put(struct FIFO32 *fifo, int data)
 {
 	if (fifo->free == 0) {
 		fifo->flags |= FLAGS_OVERRUN;
 		return -1;
 	}
-	fifo->buf[fifo->p++] = data;
-	// fifo->p++;
+	fifo->buf[fifo->p] = data;
+	fifo->p++;
 	if (fifo->p == fifo->size) {
 		fifo->p = 0;
 	}
@@ -39,14 +46,14 @@ int fifo8_put(struct FIFO8 *fifo, unsigned char data)
  * @param {FIFO8} *fifo
  * @return {*}
  */
-int fifo8_get(struct FIFO8 *fifo)
+int fifo32_get(struct FIFO32 *fifo)
 {
 	int data;
 	if (fifo->free == fifo->size) {
 		return -1;
 	}
-	data = fifo->buf[fifo->q++];
-	// fifo->q++;
+	data = fifo->buf[fifo->q];
+	fifo->q++;
 	if (fifo->q == fifo->size) {
 		fifo->q = 0;
 	}
@@ -59,7 +66,7 @@ int fifo8_get(struct FIFO8 *fifo)
  * @param {FIFO8} *fifo
  * @return {*}
  */
-int fifo8_status(struct FIFO8 *fifo)
+int fifo32_status(struct FIFO32 *fifo)
 {
 	return fifo->size - fifo->free;
 }

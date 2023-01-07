@@ -22,20 +22,21 @@ void load_gdtr(int limit, int addr);
 void load_idtr(int limit, int addr);
 int load_cr0(void);
 void store_cr0(int cr0);
+void asm_inthandler20(void);
 void asm_inthandler21(void);
 void asm_inthandler27(void);
 void asm_inthandler2c(void);
 unsigned int memtest_sub(unsigned int start, unsigned int end);
 
 /* fifo.c */
-struct FIFO8 {
-	unsigned char *buf;
+struct FIFO32 {
+	int *buf;
 	int p, q, size, free, flags;
 };
-void fifo8_init(struct FIFO8 *fifo, int size, unsigned char *buf);
-int fifo8_put(struct FIFO8 *fifo, unsigned char data);
-int fifo8_get(struct FIFO8 *fifo);
-int fifo8_status(struct FIFO8 *fifo);
+void fifo32_init(struct FIFO32 *fifo, int size, int *buf);
+int fifo32_put(struct FIFO32 *fifo, int data);
+int fifo32_get(struct FIFO32 *fifo);
+int fifo32_status(struct FIFO32 *fifo);
 
 /* graphic.c */
 void init_palette(void);
@@ -107,8 +108,8 @@ void inthandler27(int *esp);
 /* keyboard.c */
 void inthandler21(int *esp);
 void wait_KBC_sendready(void);
-void init_keyboard(void);
-extern struct FIFO8 keyfifo;
+void init_keyboard(struct FIFO32 *fifo, int data0);
+extern struct FIFO32 *keyfifo;
 #define PORT_KEYDAT		0x0060
 #define PORT_KEYCMD		0x0064
 
@@ -118,9 +119,9 @@ struct MOUSE_DEC {
 	int x, y, btn;
 };
 void inthandler2c(int *esp);
-void enable_mouse(struct MOUSE_DEC *mdec);
+void enable_mouse(struct FIFO32 *fifo, int data0, struct MOUSE_DEC *mdec);
 int mouse_decode(struct MOUSE_DEC *mdec, unsigned char dat);
-extern struct FIFO8 mousefifo;
+extern struct FIFO32 *mousefifo;
 
 /* memory.c */
 #define MEMMAN_FREES		4090	
@@ -145,9 +146,10 @@ int memman_free_4k(struct MEMMAN *man, unsigned int addr, unsigned int size);
 struct SHEET {
 	unsigned char *buf;
 	int bxsize, bysize, vx0, vy0, col_inv, height, flags;
+	struct SHTCTL *ctl;
 };
 struct SHTCTL {
-	unsigned char *vram;
+	unsigned char *vram, *map;
 	int xsize, ysize, top;
 	struct SHEET *sheets[MAX_SHEETS];
 	struct SHEET sheets0[MAX_SHEETS];
@@ -155,8 +157,29 @@ struct SHTCTL {
 struct SHTCTL *shtctl_init(struct MEMMAN *memman, unsigned char *vram, int xsize, int ysize);
 struct SHEET *sheet_alloc(struct SHTCTL *ctl);
 void sheet_setbuf(struct SHEET *sht, unsigned char *buf, int xsize, int ysize, int col_inv);
-void sheet_updown(struct SHTCTL *ctl, struct SHEET *sht, int height);
-void sheet_refreshsub(struct SHTCTL *ctl, int vx0, int vy0, int vx1, int vy1);
-void sheet_refresh(struct SHTCTL *ctl, struct SHEET *sht, int bx0, int by0, int bx1, int by1);
-void sheet_slide(struct SHTCTL *ctl, struct SHEET *sht, int vx0, int vy0);
-void sheet_free(struct SHTCTL *ctl, struct SHEET *sht);
+void sheet_updown(struct SHEET *sht, int height);
+void sheet_refreshsub(struct SHTCTL *ctl, int vx0, int vy0, int vx1, int vy1, int h0, int h1);
+void sheet_refresh(struct SHEET *sht, int bx0, int by0, int bx1, int by1);
+void sheet_slide(struct SHEET *sht, int vx0, int vy0);
+void sheet_free(struct SHEET *sht);
+void sheet_refreshmap(struct SHTCTL *ctl, int vx0, int vy0, int vx1, int vy1, int h0);
+
+/* timer.c */
+#define MAX_TIMER	500
+struct TIMER {
+	unsigned int timeout, flags;
+	struct FIFO32 *fifo;
+	int data;
+};
+struct TIMERCTL {
+	unsigned int count, next, using;
+	struct TIMER *timers[MAX_TIMER]; /* ordered timer */
+	struct TIMER timers0[MAX_TIMER];
+};
+extern struct TIMERCTL timerctl;
+void init_pit(void);
+struct TIMER *timer_alloc(void);
+void timer_free(struct TIMER *timer);
+void timer_init(struct TIMER *timer, struct FIFO32 *fifo, int data);
+void timer_settime(struct TIMER *timer, unsigned int timeout);
+void inthandler20(int *esp);
