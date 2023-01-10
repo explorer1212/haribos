@@ -70,7 +70,7 @@ VRAM	EQU		0x0ff8			; グラフィックバッファの開始番地
 		MOV		[SCRNX],AX
 		MOV		AX,[ES:DI+0x14]
 		MOV		[SCRNY],AX
-		MOV		EAX,[ES:DI+0X28]
+		MOV		EAX,[ES:DI+0x28]
 		MOV		[VRAM],EAX
 		JMP		keystatus
 	

@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-01-03 13:45:12
- * @LastEditTime: 2023-01-07 19:23:28
+ * @LastEditTime: 2023-01-10 10:20:42
  * @FilePath: \helloos0\fifo.c
  * @Description: 
  * 
@@ -9,7 +9,7 @@
 
 #define FLAGS_OVERRUN		0x0001
 
-void fifo32_init(struct FIFO32 *fifo, int size, int *buf)
+void fifo32_init(struct FIFO32 *fifo, int size, int *buf, struct TASK *task)
 {
 	fifo->size = size;
 	fifo->buf = buf;
@@ -17,6 +17,7 @@ void fifo32_init(struct FIFO32 *fifo, int size, int *buf)
 	fifo->flags = 0;
 	fifo->p = 0; 
 	fifo->q = 0; 
+	fifo->task = task;
 	return;
 }
 
@@ -38,6 +39,11 @@ int fifo32_put(struct FIFO32 *fifo, int data)
 		fifo->p = 0;
 	}
 	fifo->free--;
+	if (fifo->task != 0) {
+		if (fifo->task->flags != 2) { /* is sleeping */
+			task_run(fifo->task, -1, 0); /* wakeup it */
+		}
+	}
 	return 0;
 }
 

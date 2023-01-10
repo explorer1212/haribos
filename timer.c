@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-01-06 10:59:42
- * @LastEditTime: 2023-01-07 20:51:01
+ * @LastEditTime: 2023-01-09 11:08:29
  * @FilePath: \helloos0\timer.c
  * @Description: 
  * 
@@ -95,6 +95,7 @@ void timer_settime(struct TIMER *timer, unsigned int timeout)
 void inthandler20(int *esp)
 {
     struct TIMER *timer;
+    char ts = 0;
     io_out8(PIC0_OCW2, 0x60);
     timerctl.count++;
     if (timerctl.next > timerctl.count) { /* timer.timeout > timerctl.count, return */
@@ -107,10 +108,17 @@ void inthandler20(int *esp)
         }
         /* timeout */
         timer->flags = TIMER_FLAGS_ALLOC;
-        fifo32_put(timer->fifo, timer->data);
+        if (timer != task_timer) {
+            fifo32_put(timer->fifo, timer->data);
+        } else {
+            ts = 1;
+        }
         timer = timer->next;
     }
     timerctl.t0 = timer;
     timerctl.next = timerctl.t0->timeout;
+    if (ts != 0) {
+        task_switch();
+    }
     return;
 }
