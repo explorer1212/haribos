@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-01-03 19:26:40
- * @LastEditTime: 2023-01-14 12:34:03
+ * @LastEditTime: 2023-01-14 13:50:44
  * @FilePath: \helloos0\bootpack.c
  * @Description: 
  * 
@@ -312,7 +312,7 @@ void console_task(struct SHEET *sheet)
 {
 	struct TIMER *timer;
 	struct TASK *task = task_now();
-	int i, fifobuf[128], cursor_x = 8, cursor_c = COL8_000000;
+	int i, fifobuf[128], cursor_x = 16, cursor_c = COL8_000000;
 	char s[2];
 
 	fifo32_init(&task->fifo, 128, fifobuf, task);
@@ -340,7 +340,7 @@ void console_task(struct SHEET *sheet)
 				}
 				timer_settime(timer, 50);
 			}
-			if (256 <= i <= 511) {
+			if (256 <= i && i <= 511) {
 				if (i == 8 + 256) {
 					if (cursor_x > 16) {
 						putfonts8_asc_sht(sheet, cursor_x, 28, COL8_FFFFFF, COL8_000000, " ", 1);
