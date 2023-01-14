@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-01-08 20:58:20
- * @LastEditTime: 2023-01-10 10:32:34
+ * @LastEditTime: 2023-01-13 20:21:57
  * @FilePath: \helloos0\mtask.c
  * @Description: 
  * 
@@ -63,7 +63,6 @@ void task_remove(struct TASK *task)
     return;
 }
 
-
 /**
  * @description: find the top level and switch it 
  * @return {*}
@@ -81,10 +80,20 @@ void task_switchsub(void)
     taskctl->lv_change = 0;
     return;
 }
+
+
+void task_idle(void)
+{
+    for (;;) {
+        io_hlt();
+    }
+}
+
+
 struct TASK *task_init(struct MEMMAN *memman)
 {
     int i;
-    struct TASK *task;
+    struct TASK *task, *idle;
     struct SEGMENT_DESCRIPTOR *gdt = (struct SEGMENT_DESCRIPTOR *) ADR_GDT;
     taskctl = (struct TASKCTL *) memman_alloc_4k(memman, sizeof(struct TASKCTL));
     for (i = 0; i < MAX_TASKS; i++) {
@@ -101,10 +110,23 @@ struct TASK *task_init(struct MEMMAN *memman)
     task->priority = 2; /* 0.02s */
     task->level = 0;
     task_add(task);
-    task_switchsub();
-    load_tr(task->sel);
+    task_switchsub(); /* find the top level and switch it */
+    /* TR register: make the cpu remember which task is running
+        but the task does not switch, which also needs the far jmp */
+    load_tr(task->sel); 
     task_timer = timer_alloc();
     timer_settime(task_timer, task->priority);
+
+	idle = task_alloc();
+	idle->tss.esp = memman_alloc_4k(memman, 64 * 1024) + 64 * 1024;
+	idle->tss.eip = (int) &task_idle;
+	idle->tss.es = 1 * 8;
+	idle->tss.cs = 2 * 8;
+	idle->tss.ss = 1 * 8;
+	idle->tss.ds = 1 * 8;
+	idle->tss.fs = 1 * 8;
+	idle->tss.gs = 1 * 8;
+	task_run(idle, MAX_TASKLEVELS - 1, 1);
     return task;
 }
 
@@ -151,6 +173,25 @@ void task_run(struct TASK *task, int level, int priority)
         task->level = level;
         task_add(task);
     }
+    taskctl->lv_change = 1;
+    return;
+}
+
+
+void task_sleep(struct TASK *task)
+{
+    struct TASK *now_task;
+    if (task->flags == 2) {
+        now_task = task_now();
+        task_remove(task);
+        if (task == now_task) {
+            /* if the process itself is sleeping,
+                a task switch is required */
+            task_switchsub();
+            now_task = task_now();
+            farjmp(0, now_task->sel);
+        }
+    }
     return;
 }
 
@@ -170,23 +211,6 @@ void task_switch(void)
     timer_settime(task_timer, new_task->priority);
     if (new_task != now_task) {
         farjmp(0, new_task->sel);
-    }
-    return;
-}
-
-void task_sleep(struct TASK *task)
-{
-    struct TASK *now_task;
-    if (task->flags == 2) {
-        now_task = task_now();
-        task_remove(task);
-        if (task == now_task) {
-            /* if the process itself is sleeping,
-                a task switch is required */
-            task_switchsub();
-            now_task = task_now();
-            farjmp(0, now_task->sel);
-        }
     }
     return;
 }

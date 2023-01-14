@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-01-06 10:59:42
- * @LastEditTime: 2023-01-09 11:08:29
+ * @LastEditTime: 2023-01-12 20:58:57
  * @FilePath: \helloos0\timer.c
  * @Description: 
  * 
@@ -18,7 +18,8 @@ void init_pit(void)
 {
     int i;
     struct TIMER *t;
-    /* 中断周期设定为11932(0x2e9c)， */
+    /* 中断周期设定为11932(0x2e9c)， 
+     in this case IRQ0 will generate 100 interrupts in 1s*/
     io_out8(PIT_CTRL, 0x34);
     io_out8(PIT_CNT0, 0x9c);
     io_out8(PIT_CNT0, 0x2e);
@@ -118,7 +119,7 @@ void inthandler20(int *esp)
     timerctl.t0 = timer;
     timerctl.next = timerctl.t0->timeout;
     if (ts != 0) {
-        task_switch();
+        task_switch(); /* the current task is timeout, so switch it */
     }
     return;
 }

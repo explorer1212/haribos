@@ -1,0 +1,46 @@
+Date : 2023-01-10 19:58:35
+Directory : f:\Program\30days\30daysOS-master\tolset\helloos0
+Total : 19 files,  1883 codes, 187 comments, 241 blanks, all 2311 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| C        |         12 |      1,411 |        141 |        135 |      1,687 |
+| nasm     |          3 |        403 |         41 |         82 |        526 |
+| Makefile |          1 |         66 |          5 |         24 |         95 |
+| Batch    |          3 |          3 |          0 |          0 |          3 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                           | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                              |         19 |      1,883 |        187 |        241 |      2,311 |
++----------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                       | language | code       | comment    | blank      | total      |
++----------------------------------------------------------------+----------+------------+------------+------------+------------+
+| f:\Program\30days\30daysOS-master\tolset\helloos0\!cons_9x.bat | Batch    |          1 |          0 |          0 |          1 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\!cons_nt.bat | Batch    |          1 |          0 |          0 |          1 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\Makefile     | Makefile |         66 |          5 |         24 |         95 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\asmhead.nas  | nasm     |        133 |         30 |         40 |        203 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\bootpack.c   | C        |        264 |         26 |         26 |        316 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\bootpack.h   | C        |        200 |         12 |         11 |        223 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\dsctbl.c     | C        |         45 |          4 |          9 |         58 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\fifo.c       | C        |         50 |         23 |          6 |         79 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\graphic.c    | C        |        140 |          0 |         13 |        153 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\int.c        | C        |         23 |          1 |          7 |         31 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\ipl10.nas    | nasm     |         86 |          6 |         14 |        106 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\keyboard.c   | C        |         34 |          7 |          6 |         47 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\make.bat     | Batch    |          1 |          0 |          0 |          1 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\memory.c     | C        |        124 |          6 |         13 |        143 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\mouse.c      | C        |         62 |          7 |          6 |         75 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\mtask.c      | C        |        169 |         29 |         16 |        214 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\naskfunc.nas | nasm     |        184 |          5 |         28 |        217 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\sheet.c      | C        |        196 |         14 |         13 |        223 |
+| f:\Program\30days\30daysOS-master\tolset\helloos0\timer.c      | C        |        104 |         12 |          9 |        125 |
+| Total                                                          |          |      1,883 |        187 |        241 |      2,311 |
++----------------------------------------------------------------+----------+------------+------------+------------+------------+
