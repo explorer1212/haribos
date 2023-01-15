@@ -1,6 +1,6 @@
 OBJS_BOOTPACK = bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj \
 		int.obj fifo.obj keyboard.obj mouse.obj memory.obj sheet.obj timer.obj \
-		mtask.obj
+		mtask.obj window.obj console.obj file.obj
 
 TOOLPATH = ../z_tools/
 INCPATH  = ../z_tools/haribote/
@@ -19,12 +19,12 @@ IMGTOL   = $(TOOLPATH)imgtol.com
 COPY     = copy
 DEL      = del
 
-# ï¿½fï¿½tï¿½Hï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½
+# ƒfƒtƒHƒ‹ƒg“®ì
 
 default :
 	$(MAKE) img
 
-# ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Kï¿½ï¿½
+# ƒtƒ@ƒCƒ‹¶¬‹K‘¥
 
 ipl10.bin : ipl10.nas Makefile
 	$(NASK) ipl10.nas ipl10.bin ipl10.lst
@@ -53,9 +53,11 @@ haribote.img : ipl10.bin haribote.sys Makefile
 	$(EDIMG)   imgin:../z_tools/fdimg0at.tek \
 		wbinimg src:ipl10.bin len:512 from:0 to:0 \
 		copy from:haribote.sys to:@: \
+		copy from:ipl10.nas to:@: \
+		copy from:make.bat to:@: \
 		imgout:haribote.img
 
-# ï¿½ï¿½Ê‹Kï¿½ï¿½
+# ˆê”Ê‹K‘¥
 
 %.gas : %.c bootpack.h Makefile
 	$(CC1) -o $*.gas $*.c
@@ -66,7 +68,7 @@ haribote.img : ipl10.bin haribote.sys Makefile
 %.obj : %.nas Makefile
 	$(NASK) $*.nas $*.obj $*.lst
 
-# ï¿½Rï¿½}ï¿½ï¿½ï¿½h
+# ƒRƒ}ƒ“ƒh
 
 img :
 	$(MAKE) haribote.img

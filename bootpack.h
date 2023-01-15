@@ -8,6 +8,8 @@ struct BOOTINFO {
 	char *vram;
 };
 #define ADR_BOOTINFO	0x00000ff0
+#define ADR_DISKIMG		0x00100000
+
 /* naskfunc.nas */
 void io_hlt(void);
 void io_cli(void);
@@ -28,6 +30,7 @@ void asm_inthandler27(void);
 void asm_inthandler2c(void);
 unsigned int memtest_sub(unsigned int start, unsigned int end);
 void farjmp(int eip, int cs);
+
 /* fifo.c */
 struct FIFO32 {
 	int *buf;
@@ -90,7 +93,6 @@ void set_gatedesc(struct GATE_DESCRIPTOR *gd, int offset, int selector, int ar);
 #define AR_CODE32_ER	0x409a
 #define	AR_TSS32		0x0089
 #define AR_INTGATE32	0x008e
-
 
 /* int.c */
 void init_pic(void);
@@ -159,11 +161,9 @@ struct SHTCTL *shtctl_init(struct MEMMAN *memman, unsigned char *vram, int xsize
 struct SHEET *sheet_alloc(struct SHTCTL *ctl);
 void sheet_setbuf(struct SHEET *sht, unsigned char *buf, int xsize, int ysize, int col_inv);
 void sheet_updown(struct SHEET *sht, int height);
-void sheet_refreshsub(struct SHTCTL *ctl, int vx0, int vy0, int vx1, int vy1, int h0, int h1);
 void sheet_refresh(struct SHEET *sht, int bx0, int by0, int bx1, int by1);
 void sheet_slide(struct SHEET *sht, int vx0, int vy0);
 void sheet_free(struct SHEET *sht);
-void sheet_refreshmap(struct SHTCTL *ctl, int vx0, int vy0, int vx1, int vy1, int h0);
 
 /* timer.c */
 #define MAX_TIMER	500
@@ -221,3 +221,23 @@ struct TASK *task_alloc(void);
 void task_run(struct TASK *task, int level, int priority);
 void task_switch(void);
 void task_sleep(struct TASK *task);
+
+/* window.c */
+void make_window8(unsigned char *buf, int xsize, int ysize, char *title, char act);
+void putfonts8_asc_sht(struct SHEET *sht, int x, int y, int c, int b, char *s, int l);
+void make_textbox8(struct SHEET *sht, int x0, int y0, int sx, int sy, int c);
+void make_wtitle8(unsigned char *buf, int xsize, char *title, char act);
+
+/* console.c */
+void console_task(struct SHEET *sheet, unsigned int memtotal);
+int cons_newline(int cursor_y, struct SHEET *sheet);
+
+/* file.c */
+struct FILEINFO {
+	unsigned char name[8], ext[3], type;
+	char reserve[10];
+	unsigned short time, date, clustno;
+	unsigned int size;
+};
+void file_readfat(int *fat, unsigned char *img);
+void file_loadfile(int clustno, int size, char *buf, int *fat, char *img);
