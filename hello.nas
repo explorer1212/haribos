@@ -5,11 +5,12 @@
 putloop:
 		MOV		AL,[CS:ECX]
 		CMP		AL,0
-		JE 		fin
+		JE		fin
 		INT		0x40
 		ADD		ECX,1
 		JMP		putloop
 fin:
-		RETF
+		MOV		EDX,4
+		INT		0x40
 msg:
 		DB	"hello",0

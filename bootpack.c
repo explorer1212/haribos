@@ -39,6 +39,7 @@ void HariMain(void)
 		0,   0,   0,   '_', 0,   0,   0,   0,   0,   0,   0,   0,   0,   '|', 0,   0
 	};
 	int key_to = 0, key_shift = 0, key_leds = (binfo->leds >> 4) & 7, keycmd_wait = -1;
+	struct CONSOLE *cons;
 
 	init_gdtidt();
 	init_pic();
@@ -207,6 +208,14 @@ void HariMain(void)
 					key_leds ^= 4;
 					fifo32_put(&keycmd, KEYCMD_LED);
 					fifo32_put(&keycmd, key_leds);
+				}
+				if (i == 256 + 0x3b && key_shift != 0 && task_cons->tss.ss0 != 0) {
+					cons = (struct CONSOLE *) *((int *) 0x0fec);
+					cons_putstr0(cons, "\nBreak(key) :\n");
+					io_cli();	/* �����I���������Ƀ^�X�N���ς��ƍ��邩�� */
+					task_cons->tss.eax = (int) &(task_cons->tss.esp0);
+					task_cons->tss.eip = (int) asm_end_app;
+					io_sti();
 				}
 				if (i == 256 + 0x45) {	/* NumLock */
 					key_leds ^= 2;

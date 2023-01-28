@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-01-08 20:58:20
- * @LastEditTime: 2023-01-13 20:21:57
+ * @LastEditTime: 2023-01-28 15:43:07
  * @FilePath: \helloos0\mtask.c
  * @Description: 
  * 
@@ -152,9 +152,11 @@ struct TASK *task_alloc(void)
 			task->tss.gs = 0;
 			task->tss.ldtr = 0;
 			task->tss.iomap = 0x40000000;
+            task->tss.ss0 = 0;
 			return task;
         }
     }
+    return 0;
 }
 
 void task_run(struct TASK *task, int level, int priority)

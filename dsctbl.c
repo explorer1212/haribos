@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-01-14 13:49:54
- * @LastEditTime: 2023-01-26 22:37:15
+ * @LastEditTime: 2023-01-28 15:17:39
  * @FilePath: \helloos0\dsctbl.c
  * @Description: 
  * 
@@ -30,11 +30,13 @@ void init_gdtidt(void)
 	load_idtr(LIMIT_IDT, ADR_IDT);
 
 	/* 设置IDT */
+	set_gatedesc(idt + 0x0c, (int) asm_inthandler0c, 2 * 8, AR_INTGATE32);
+	set_gatedesc(idt + 0x0d, (int) asm_inthandler0d, 2 * 8, AR_INTGATE32);
 	set_gatedesc(idt + 0x20, (int) asm_inthandler20, 2 * 8, AR_INTGATE32); /* timer */
 	set_gatedesc(idt + 0x21, (int) asm_inthandler21, 2 * 8, AR_INTGATE32); /* keyboard */
 	set_gatedesc(idt + 0x27, (int) asm_inthandler27, 2 * 8, AR_INTGATE32);
 	set_gatedesc(idt + 0x2c, (int) asm_inthandler2c, 2 * 8, AR_INTGATE32); /* mouse */
-	set_gatedesc(idt + 0x40, (int) asm_hrb_api, 2 * 8, AR_INTGATE32); /* api */
+	set_gatedesc(idt + 0x40, (int) asm_hrb_api, 2 * 8, AR_INTGATE32 + 0x60); /* api */
 
 	return;
 }
