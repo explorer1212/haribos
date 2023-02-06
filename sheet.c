@@ -36,6 +36,7 @@ struct SHEET *sheet_alloc(struct SHTCTL *ctl)
             sht = &ctl->sheets0[i];
             sht->flags = SHEET_USE; 
             sht->height = -1;
+            sht->task = 0;
             return sht;
         }
     }
@@ -219,4 +220,13 @@ void sheet_refreshmap(struct SHTCTL *ctl, int vx0, int vy0, int vx1, int vy1, in
         }
     }
     return;
+}
+
+void sheet_free(struct SHEET *sht)
+{
+	if (sht->height >= 0) {
+		sheet_updown(sht, -1); /* �\�����Ȃ�܂���\���ɂ��� */
+	}
+	sht->flags = 0; /* ���g�p�}�[�N */
+	return;
 }

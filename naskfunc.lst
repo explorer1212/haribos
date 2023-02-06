@@ -259,24 +259,24 @@
    259 00000168 FF 5C 24 04                     	CALL	FAR [ESP+4]
    260 0000016C C3                              	RET	
    261 0000016D                                 
-   262 0000016D                                 
-   263 0000016D                                 _asm_hrb_api:
-   264 0000016D FB                              		STI
-   265 0000016E 1E                              		PUSH	DS
-   266 0000016F 06                              		PUSH	ES
-   267 00000170 60                              		PUSHAD		; �ۑ��̂��߂�PUSH
-   268 00000171 60                              		PUSHAD		; hrb_api�ɂ킽�����߂�PUSH
-   269 00000172 66 8C D0                        		MOV		AX,SS
-   270 00000175 8E D8                           		MOV		DS,AX		; OS�p�̃Z�O�����g��DS��ES�ɂ������
-   271 00000177 8E C0                           		MOV		ES,AX
-   272 00000179 E8 [00000000]                   		CALL	_hrb_api
-   273 0000017E 83 F8 00                        		CMP		EAX,0		; EAX��0�łȂ���΃A�v���I������
-   274 00000181 75 07                           		JNE		_asm_end_app
-   275 00000183 83 C4 20                        		ADD		ESP,32
-   276 00000186 61                              		POPAD
-   277 00000187 07                              		POP		ES
-   278 00000188 1F                              		POP		DS
-   279 00000189 CF                              		IRETD
+   262 0000016D                                 _asm_hrb_api:
+   263 0000016D FB                              		STI
+   264 0000016E 1E                              		PUSH	DS
+   265 0000016F 06                              		PUSH	ES
+   266 00000170 60                              		PUSHAD		; �ۑ��̂��߂�PUSH
+   267 00000171 60                              		PUSHAD		; hrb_api�ɂ킽�����߂�PUSH
+   268 00000172 66 8C D0                        		MOV		AX,SS
+   269 00000175 8E D8                           		MOV		DS,AX		; OS�p�̃Z�O�����g��DS��ES�ɂ������
+   270 00000177 8E C0                           		MOV		ES,AX
+   271 00000179 E8 [00000000]                   		CALL	_hrb_api
+   272 0000017E 83 F8 00                        		CMP		EAX,0		; EAX��0�łȂ���΃A�v���I������
+   273 00000181 75 07                           		JNE		_asm_end_app
+   274 00000183 83 C4 20                        		ADD		ESP,32
+   275 00000186 61                              		POPAD
+   276 00000187 07                              		POP		ES
+   277 00000188 1F                              		POP		DS
+   278 00000189 CF                              		IRETD
+   279 0000018A                                 		
    280 0000018A                                 _asm_end_app:
    281 0000018A                                 ;	EAX��tss.esp0�̔Ԓn
    282 0000018A 8B 20                           		MOV		ESP,[EAX]
@@ -298,10 +298,10 @@
    298 000001B4 8E DB                           	MOV		DS,BX
    299 000001B6 8E E3                           	MOV		FS,BX
    300 000001B8 8E EB                           	MOV		GS,BX
-   301 000001BA 83 C9 03                            OR		ECX,3			; �A�v���p�̃Z�O�����g�ԍ���3��OR����
-   302 000001BD 83 CB 03                            OR		EBX,3			; �A�v���p�̃Z�O�����g�ԍ���3��OR����
-   303 000001C0 53                                  PUSH	EBX				; �A�v����SS
-   304 000001C1 52                                  PUSH	EDX				; �A�v����ESP
-   305 000001C2 51                                  PUSH	ECX				; �A�v����CS
-   306 000001C3 50                                  PUSH	EAX				; �A�v����EIP
+   301 000001BA 83 C9 03                            OR		ECX,3			; 
+   302 000001BD 83 CB 03                            OR		EBX,3			; 
+   303 000001C0 53                                  PUSH	EBX				; 
+   304 000001C1 52                                  PUSH	EDX				; 
+   305 000001C2 51                                  PUSH	ECX				; 
+   306 000001C3 50                                  PUSH	EAX				; eip of the program
    307 000001C4 CB                                  RETF

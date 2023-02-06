@@ -259,7 +259,6 @@ _farcall:		; void farcall(int eip, int cs);
 	CALL	FAR [ESP+4]
 	RET	
 
-
 _asm_hrb_api:
 		STI
 		PUSH	DS
@@ -277,6 +276,7 @@ _asm_hrb_api:
 		POP		ES
 		POP		DS
 		IRETD
+		
 _asm_end_app:
 ;	EAX��tss.esp0�̔Ԓn
 		MOV		ESP,[EAX]
@@ -298,10 +298,10 @@ _start_app:		; void start_app(int eip, int cs, int esp, int ds, int *tss_esp0);
 	MOV		DS,BX
 	MOV		FS,BX
 	MOV		GS,BX
-    OR		ECX,3			; �A�v���p�̃Z�O�����g�ԍ���3��OR����
-    OR		EBX,3			; �A�v���p�̃Z�O�����g�ԍ���3��OR����
-    PUSH	EBX				; �A�v����SS
-    PUSH	EDX				; �A�v����ESP
-    PUSH	ECX				; �A�v����CS
-    PUSH	EAX				; �A�v����EIP
+    OR		ECX,3			; 
+    OR		EBX,3			; 
+    PUSH	EBX				; 
+    PUSH	EDX				; 
+    PUSH	ECX				; 
+    PUSH	EAX				; eip of the program
     RETF
