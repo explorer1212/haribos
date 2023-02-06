@@ -10,7 +10,7 @@ void HariMain(void)
 	char s[40];
 	struct FIFO32 fifo, keycmd;
 	int fifobuf[128], keycmd_buf[32], *cons_fifo[2];
-	int mx, my, i;
+	int mx, my, i, new_mx = -1, new_my = 0, new_wx = 0x7fffffff, new_wy = 0;
 	unsigned int memtotal;
 	struct MOUSE_DEC mdec;
 	struct MEMMAN *memman = (struct MEMMAN *) MEMMAN_ADDR;
@@ -38,7 +38,7 @@ void HariMain(void)
 		0,   0,   0,   '_', 0,   0,   0,   0,   0,   0,   0,   0,   0,   '|', 0,   0
 	};
 	int key_shift = 0, key_leds = (binfo->leds >> 4) & 7, keycmd_wait = -1;
-	int j, x, y, mmx = -1, mmy = -1;
+	int j, x, y, mmx = -1, mmy = -1, mmx2 = 0;
 	struct SHEET *sht = 0, *key_win;
 
 	init_gdtidt();
@@ -124,8 +124,18 @@ void HariMain(void)
 		}
 		io_cli();
 		if (fifo32_status(&fifo) == 0) {
-			task_sleep(task_a);
-			io_sti();
+			if (new_mx >= 0) {
+				io_sti();
+				sheet_slide(sht_mouse, new_mx, new_my);
+				new_mx = -1;
+			} else if (new_wx != 0x7fffffff) {
+				io_sti();
+				sheet_slide(sht, new_wx, new_wy);
+				new_wx = 0x7fffffff;
+			} else {
+				task_sleep(task_a);
+				io_sti();
+			}
 		} else {
 			i = fifo32_get(&fifo);
 			io_sti();
@@ -216,7 +226,8 @@ void HariMain(void)
 					if (my < 0) { my = 0; }
 					if (mx > binfo->scrnx - 1) { mx = binfo->scrnx - 1; }
 					if (my > binfo->scrny - 1) { my = binfo->scrny - 1; }
-					sheet_slide(sht_mouse, mx, my);
+					new_mx = mx;
+					new_my = my;
 					if ((mdec.btn & 0x01) != 0) {
 						/* left of mouse */
 						if (mmx < 0) {
@@ -235,6 +246,8 @@ void HariMain(void)
 										if (3 <= x && x < sht->bxsize - 3 && 3 <= y && y < sht->bysize - 3) {
 											mmx = mx;
 											mmy = my;
+											mmx2 = sht->vx0;
+											new_wy = sht->vy0;
 										}
 										if (sht->bxsize - 21 <= x && x < sht->bxsize - 5 && 5 <= y && y < 19) { /* click x to close the window */
 											if ((sht->flags & 0x10) != 0) { /* application */
@@ -253,12 +266,16 @@ void HariMain(void)
 						} else {
 							x = mx - mmx;
 							y = my - mmy;
-							sheet_slide(sht, sht->vx0 + x, sht->vy0 + y);
-							mmx = mx;
+							new_wx = (mmx2 + x + 2) & ~3;
+							new_wy = new_wy + y;
 							mmy = my;
 						}
 					} else {
 						mmx = -1;
+						if (new_wx != 0x7fffffff) {
+							sheet_slide(sht, new_wx, new_wy);	/* ��x�m�肳���� */
+							new_wx = 0x7fffffff;
+						}
 					}
 				}
 			} 
