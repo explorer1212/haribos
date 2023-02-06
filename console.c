@@ -429,7 +429,7 @@ int *inthandler0c(int *esp)
 	return &(task->tss.esp0);	/* �ُ�I�������� */
 }
 
-int inthandler0d(int *esp)
+int *inthandler0d(int *esp)
 {
 	struct TASK *task = task_now();
 	struct CONSOLE *cons = task->cons;
