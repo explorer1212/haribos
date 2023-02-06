@@ -17,8 +17,8 @@ void HariMain(void)
 	struct MOUSE_DEC mdec;
 	struct MEMMAN *memman = (struct MEMMAN *) MEMMAN_ADDR;
 	unsigned char *buf_back, buf_mouse[256], *buf_win, *buf_cons[2];
-	struct SHEET *sht_back, *sht_mouse, *sht_win, *sht_cons[2];
-	struct TASK *task_a, *task_cons[2];
+	struct SHEET *sht_back, *sht_mouse, *sht_cons[2];
+	struct TASK *task_a, *task_cons[2], *task;
 	struct TIMER *timer;
 	static char keytable0[0x80] = {
 		0,   0,   '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '^', 0,   0,
@@ -214,13 +214,15 @@ void HariMain(void)
 					fifo32_put(&keycmd, KEYCMD_LED);
 					fifo32_put(&keycmd, key_leds);
 				}
-				if (i == 256 + 0x3b && key_shift != 0 && task_cons[0]->tss.ss0 != 0) {
-					cons = (struct CONSOLE *) *((int *) 0x0fec);
-					cons_putstr0(cons, "\nBreak(key) :\n");
-					io_cli();	/* �����I���������Ƀ^�X�N���ς��ƍ��邩�� */
-					task_cons[0]->tss.eax = (int) &(task_cons[0]->tss.esp0);
-					task_cons[0]->tss.eip = (int) asm_end_app;
-					io_sti();
+				if (i == 256 + 0x3b && key_shift != 0) {
+					task = key_win->task;
+					if (task != 0 && task->tss.ss0 != 0) {	/* Shift+F1 */
+						cons_putstr0(task->cons, "\nBreak(key) :\n");
+						io_cli();	/* �����I���������Ƀ^�X�N���ς��ƍ��邩�� */
+						task->tss.eax = (int) &(task->tss.esp0);
+						task->tss.eip = (int) asm_end_app;
+						io_sti();
+					}
 				}
 				if (i == 256 + 0x45) {	/* NumLock */
 					key_leds ^= 2;
@@ -275,12 +277,12 @@ void HariMain(void)
 											mmy = my;
 										}
 										if (sht->bxsize - 21 <= x && x < sht->bxsize - 5 && 5 <= y && y < 19) { /* click x to close the window */
-											if ((sht->flags & 0x10) != 0) {
-												cons = (struct CONSOLE *) *((int *) 0x0fec);
-												cons_putstr0(cons, "\nBreak(mouse) :\n");
-												io_cli();
-												task_cons[0]->tss.eax = (int) &(task_cons[0]->tss.esp0);
-												task_cons[0]->tss.eip = (int) asm_end_app;
+											if ((sht->flags & 0x10) != 0) { /* application */
+												task = sht->task;
+												cons_putstr0(task->cons, "\nBreak(mouse) :\n");
+												io_cli();	/* �����I���������Ƀ^�X�N���ς��ƍ��邩�� */
+												task->tss.eax = (int) &(task->tss.esp0);
+												task->tss.eip = (int) asm_end_app;
 												io_sti();
 											}
 										}
