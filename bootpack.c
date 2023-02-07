@@ -278,6 +278,8 @@ void HariMain(void)
 				}
 			} else if (768 <= i && i <= 1023) { /* close console */
 				close_console(shtctl->sheets0 + (i - 768));
+			} else if (1024 <= i && i <= 2023) {
+				close_constask(taskctl->tasks0 + (i - 1024));
 			}
 		}
 	}
@@ -327,6 +329,27 @@ struct SHEET *open_console(struct SHTCTL *shtctl, unsigned int memtotal)
 	sht->flags |= 0x20;	/* �J�[�\������ */
 	fifo32_init(&task->fifo, 128, cons_fifo, task);
 	return sht;
+}
+
+struct TASK *open_constask(struct SHEET *sht, unsigned int memtotal)
+{
+	struct MEMMAN *memman = (struct MEMMAN *) MEMMAN_ADDR;
+	struct TASK *task = task_alloc();
+	int *cons_fifo = (int *) memman_alloc_4k(memman, 128 * 4);
+	task->cons_stack = memman_alloc_4k(memman, 64 * 1024);
+	task->tss.esp = task->cons_stack + 64 * 1024 - 12;
+	task->tss.eip = (int) &console_task;
+	task->tss.es = 1 * 8;
+	task->tss.cs = 2 * 8;
+	task->tss.ss = 1 * 8;
+	task->tss.ds = 1 * 8;
+	task->tss.fs = 1 * 8;
+	task->tss.gs = 1 * 8;
+	*((int *) (task->tss.esp + 4)) = (int) sht;
+	*((int *) (task->tss.esp + 8)) = memtotal;
+	task_run(task, 2, 2); /* level=2, priority=2 */
+	fifo32_init(&task->fifo, 128, cons_fifo, task);
+	return task;
 }
 
 void close_constask(struct TASK *task)
