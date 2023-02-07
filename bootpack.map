@@ -1,5 +1,5 @@
-text size :  17021(0x0427D)
-data size :  15209(0x03B69)
+text size :  17210(0x0433A)
+data size :  15216(0x03B70)
 bss  size :      0(0x00000)
 
 0x00000000 : (.text)
@@ -120,28 +120,29 @@ bss  size :      0(0x00000)
 0x00003099 : _cons_putstr0
 0x000030C7 : _cons_putstr1
 0x000030FA : _cons_runcmd
-0x0000321C : _cmd_mem
-0x0000325D : _cmd_cls
-0x000032B6 : _cmd_dir
-0x0000334C : _cmd_type
-0x000033DC : _cmd_exit
-0x0000344A : _cmd_app
-0x0000367C : _hrb_api
-0x00003AEC : _inthandler0c
-0x00003B35 : _inthandler0d
-0x00003B7E : _hrb_api_linewin
-0x00003C5A : _file_readfat
-0x00003C5A : (.text)
-0x00003CAC : _file_loadfile
-0x00003D12 : _file_search
-0x00003DBB : (.text)
-0x00003DBB : _HariStartup
-0x00003DC4 : _sprintf
-0x00003DC4 : (.text)
-0x00003DD8 : (.text)
-0x00003E14 : _strtoul0
-0x00003EE7 : (.text)
-0x00003F0F : _vsprintf
+0x0000324F : _cmd_mem
+0x00003290 : _cmd_cls
+0x000032E9 : _cmd_dir
+0x0000337F : _cmd_type
+0x0000340F : _cmd_exit
+0x0000347D : _cmd_start
+0x00003507 : _cmd_app
+0x00003739 : _hrb_api
+0x00003BA9 : _inthandler0c
+0x00003BF2 : _inthandler0d
+0x00003C3B : _hrb_api_linewin
+0x00003D17 : _file_readfat
+0x00003D17 : (.text)
+0x00003D69 : _file_loadfile
+0x00003DCF : _file_search
+0x00003E78 : (.text)
+0x00003E78 : _HariStartup
+0x00003E81 : _sprintf
+0x00003E81 : (.text)
+0x00003E95 : (.text)
+0x00003ED1 : _strtoul0
+0x00003FA4 : (.text)
+0x00003FCC : _vsprintf
 0x00000000 : (.data)
 0x00000000 : (.data)
 0x00000000 : (.data)
@@ -169,7 +170,7 @@ bss  size :      0(0x00000)
 0x00313990 : _taskctl
 0x00313994 : (.data)
 0x00313A74 : (.data)
-0x00313B49 : (.data)
+0x00313B50 : (.data)
 0x00000000 : (.bss)
 0x00000000 : (.bss)
 0x00000000 : (.bss)
