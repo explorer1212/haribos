@@ -3,6 +3,10 @@
 
 #define KEYCMD_LED		0xed
 
+void keywin_off(struct SHEET *key_win);
+void keywin_on(struct SHEET *key_win);
+struct SHEET *open_console(struct SHTCTL *shtctl, unsigned int memtotal);
+
 void HariMain(void)
 {
 	struct BOOTINFO *binfo = (struct BOOTINFO *) ADR_BOOTINFO;
@@ -14,9 +18,9 @@ void HariMain(void)
 	unsigned int memtotal;
 	struct MOUSE_DEC mdec;
 	struct MEMMAN *memman = (struct MEMMAN *) MEMMAN_ADDR;
-	unsigned char *buf_back, buf_mouse[256], *buf_win, *buf_cons[2];
-	struct SHEET *sht_back, *sht_mouse, *sht_cons[2];
-	struct TASK *task_a, *task_cons[2], *task;
+	unsigned char *buf_back, buf_mouse[256];
+	struct SHEET *sht_back, *sht_mouse;
+	struct TASK *task_a, *task;
 	static char keytable0[0x80] = {
 		0,   0,   '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '^', 0x08, 0,
 		'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '@', '[', 0x0a, 0, 'A', 'S',
@@ -71,8 +75,7 @@ void HariMain(void)
 	init_screen8(buf_back, binfo->scrnx, binfo->scrny);
 
 	/* sht_cons */
-	sht_cons[0] = open_console(shtctl, memtotal);
-	sht_cons[1] = 0; /* �܂��J���ĂȂ� */
+	key_win = open_console(shtctl, memtotal);
 
 	/* sht_mouse */
 	sht_mouse = sheet_alloc(shtctl);
@@ -82,12 +85,11 @@ void HariMain(void)
 	my = (binfo->scrny - 28 - 16) / 2;
 
 	sheet_slide(sht_back,  0,  0);
-	sheet_slide(sht_cons[0],  32,  4);
+	sheet_slide(key_win,  32,  4);
 	sheet_slide(sht_mouse, mx, my);
 	sheet_updown(sht_back,     0);
-	sheet_updown(sht_cons[0],  1);
+	sheet_updown(key_win,  1);
 	sheet_updown(sht_mouse,    2);
-	key_win = sht_cons[0];
 	keywin_on(key_win);
 
 	fifo32_put(&keycmd, KEYCMD_LED);
@@ -185,12 +187,11 @@ void HariMain(void)
 						io_sti();
 					}
 				}
-				if (i == 256 + 0x3c && key_shift != 0 && sht_cons[1] == 0) {	/* Shift+F2 */
-					sht_cons[1] = open_console(shtctl, memtotal);
-					sheet_slide(sht_cons[1], 32, 4);
-					sheet_updown(sht_cons[1], shtctl->top);
+				if (i == 256 + 0x3c && key_shift != 0) {	/* Shift+F2 */
 					keywin_off(key_win);
-					key_win = sht_cons[1];
+					key_win = open_console(shtctl, memtotal);
+					sheet_slide(key_win, 32, 4);
+					sheet_updown(key_win, shtctl->top);
 					keywin_on(key_win);
 				}
 				if (i == 256 + 0x57) { /* F11 */
