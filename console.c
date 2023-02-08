@@ -33,7 +33,7 @@ void console_task(struct SHEET *sheet, int memtotal)
 		} else {
 			i = fifo32_get(&task->fifo);
 			io_sti();
-			if (i <= 1) { 
+			if (i <= 1 && cons.sht != 0) { 
 				if (i != 0) {
 					timer_init(cons.timer, &task->fifo, 0); 
 					if (cons.cur_c >= 0) {
@@ -51,7 +51,9 @@ void console_task(struct SHEET *sheet, int memtotal)
 				cons.cur_c = COL8_FFFFFF;
 			}
 			if (i == 3) { /* stop flashing */
-				boxfill8(sheet->buf, sheet->bxsize, COL8_000000, cons.cur_x, cons.cur_y, cons.cur_x + 7, cons.cur_y + 15);
+				if (cons.sht != 0) {
+					boxfill8(sheet->buf, sheet->bxsize, COL8_000000, cons.cur_x, cons.cur_y, cons.cur_x + 7, cons.cur_y + 15);
+				}
 				cons.cur_c = -1;
 			}
 			if (i == 4) { /* click 'x' to exit */
@@ -69,7 +71,7 @@ void console_task(struct SHEET *sheet, int memtotal)
 					cons_newline(&cons);
 					cons_runcmd(cmdline, &cons, fat, memtotal);
 					cons_putchar(&cons, '>', 1);	
-					if (sheet == 0) {
+					if (cons.sht == 0) {
 						cmd_exit(&cons, fat);
 					}
 				} else {
@@ -79,7 +81,7 @@ void console_task(struct SHEET *sheet, int memtotal)
 					}
 				}
 			}
-			if (sheet != 0) {
+			if (cons.sht != 0) {
 				if (cons.cur_c >= 0) {
 					boxfill8(sheet->buf, sheet->bxsize, cons.cur_c, cons.cur_x, cons.cur_y, cons.cur_x + 7, cons.cur_y + 15);
 				}
@@ -379,6 +381,7 @@ int *hrb_api(int edi, int esi, int ebp, int esp, int ebx, int edx, int ecx, int 
 	struct CONSOLE *cons = task->cons;
 	struct SHTCTL *shtctl = (struct SHTCTL *) *((int *) 0x0fe4);
 	struct SHEET *sht;
+	struct FIFO32 *sys_fifo = (struct FIFO32 *) *((int *) 0x0fec);
 	int *reg = &eax + 1;	/* eax�̎��̔Ԓn */
 		/* �ۑ��̂��߂�PUSHAD�������ɏ��������� */
 		/* reg[0] : EDI,   reg[1] : ESI,   reg[2] : EBP,   reg[3] : ESP */
@@ -463,6 +466,12 @@ int *hrb_api(int edi, int esi, int ebp, int esp, int ebx, int edx, int ecx, int 
 			}
 			if (i == 3) {	/* �J�[�\��OFF */
 				cons->cur_c = -1;
+			} else if (i == 4) { /* only close console */
+				timer_cancel(cons->timer);
+				io_cli();
+				fifo32_put(sys_fifo, cons->sht - shtctl->sheets0 + 2024);
+				cons->sht = 0;
+				io_sti();
 			}
 			if (i >= 256) { /* keyboard */
 				reg[7] = i - 256;
