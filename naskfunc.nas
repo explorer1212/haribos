@@ -1,10 +1,10 @@
 ; naskfunc
 ; TAB=4
 
-[FORMAT "WCOFF"]				; �I�u�W�F�N�g�t�@�C������郂�[�h	
-[INSTRSET "i486p"]				; 486�̖��߂܂Ŏg�������Ƃ����L�q
-[BITS 32]						; 32�r�b�g���[�h�p�̋@�B�����点��
-[FILE "naskfunc.nas"]			; �\�[�X�t�@�C�������
+[FORMAT "WCOFF"]				
+[INSTRSET "i486p"]		
+[BITS 32]						
+[FILE "naskfunc.nas"]			
 
 		GLOBAL	_io_hlt, _io_cli, _io_sti, _io_stihlt
 		GLOBAL	_io_in8,  _io_in16,  _io_in32
@@ -130,7 +130,7 @@ _asm_inthandler20:
 		POP		ES
 		IRETD
 
-_asm_inthandler21:
+_asm_inthandler21: ; save the registers, make DS, ES equal to SS, then call _inthandler21
 		PUSH	ES
 		PUSH	DS
 		PUSHAD
@@ -146,7 +146,7 @@ _asm_inthandler21:
 		POP		ES
 		IRETD
 
-_asm_inthandler27:
+_asm_inthandler27: ; save the registers to call _inthandler21
 		PUSH	ES
 		PUSH	DS
 		PUSHAD
@@ -195,7 +195,7 @@ _asm_inthandler0c:
 		POPAD
 		POP		DS
 		POP		ES
-		ADD		ESP,4			; INT 0x0c �ł��A���ꂪ�K�v
+		ADD		ESP,4			; INT 0x0c 
 		IRETD
 
 _asm_inthandler0d:
@@ -209,17 +209,17 @@ _asm_inthandler0d:
 		MOV		DS,AX
 		MOV		ES,AX
 		CALL	_inthandler0d
-		CMP		EAX,0		; ���������Ⴄ
-		JNE		_asm_end_app		; ���������Ⴄ
+		CMP		EAX,0		; 
+		JNE		_asm_end_app		; 
 		POP		EAX
 		POPAD
 		POP		DS
 		POP		ES
-		ADD		ESP,4			; INT 0x0d �ł́A���ꂪ�K�v
+		ADD		ESP,4			; INT 0x0d 
 		IRETD
 
 _memtest_sub:	; unsigned int memtest_sub(unsigned int start, unsigned int end)
-		PUSH	EDI						; �iEBX, ESI, EDI ���g�������̂Łj
+		PUSH	EDI						; 
 		PUSH	ESI
 		PUSH	EBX
 		MOV		ESI,0xaa55aa55			; pat0 = 0xaa55aa55;

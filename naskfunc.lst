@@ -1,10 +1,10 @@
      1 00000000                                 ; naskfunc
      2 00000000                                 ; TAB=4
      3 00000000                                 
-     4 00000000                                 [FORMAT "WCOFF"]				; �I�u�W�F�N�g�t�@�C������郂�[�h	
-     5 00000000                                 [INSTRSET "i486p"]				; 486�̖��߂܂Ŏg�������Ƃ����L�q
-     6 00000000                                 [BITS 32]						; 32�r�b�g���[�h�p�̋@�B�����点��
-     7 00000000                                 [FILE "naskfunc.nas"]			; �\�[�X�t�@�C�������
+     4 00000000                                 [FORMAT "WCOFF"]				
+     5 00000000                                 [INSTRSET "i486p"]		
+     6 00000000                                 [BITS 32]						
+     7 00000000                                 [FILE "naskfunc.nas"]			
      8 00000000                                 
      9 00000000                                 		GLOBAL	_io_hlt, _io_cli, _io_sti, _io_stihlt
     10 00000000                                 		GLOBAL	_io_in8,  _io_in16,  _io_in32
@@ -130,7 +130,7 @@
    130 00000096 07                              		POP		ES
    131 00000097 CF                              		IRETD
    132 00000098                                 
-   133 00000098                                 _asm_inthandler21:
+   133 00000098                                 _asm_inthandler21: ; save the registers, make DS, ES equal to SS, then call _inthandler21
    134 00000098 06                              		PUSH	ES
    135 00000099 1E                              		PUSH	DS
    136 0000009A 60                              		PUSHAD
@@ -146,7 +146,7 @@
    146 000000AD 07                              		POP		ES
    147 000000AE CF                              		IRETD
    148 000000AF                                 
-   149 000000AF                                 _asm_inthandler27:
+   149 000000AF                                 _asm_inthandler27: ; save the registers to call _inthandler21
    150 000000AF 06                              		PUSH	ES
    151 000000B0 1E                              		PUSH	DS
    152 000000B1 60                              		PUSHAD
@@ -195,7 +195,7 @@
    195 000000FA 61                              		POPAD
    196 000000FB 1F                              		POP		DS
    197 000000FC 07                              		POP		ES
-   198 000000FD 83 C4 04                        		ADD		ESP,4			; INT 0x0c �ł��A���ꂪ�K�v
+   198 000000FD 83 C4 04                        		ADD		ESP,4			; INT 0x0c 
    199 00000100 CF                              		IRETD
    200 00000101                                 
    201 00000101                                 _asm_inthandler0d:
@@ -209,17 +209,17 @@
    209 0000010B 8E D8                           		MOV		DS,AX
    210 0000010D 8E C0                           		MOV		ES,AX
    211 0000010F E8 [00000000]                   		CALL	_inthandler0d
-   212 00000114 83 F8 00                        		CMP		EAX,0		; ���������Ⴄ
-   213 00000117 75 71                           		JNE		_asm_end_app		; ���������Ⴄ
+   212 00000114 83 F8 00                        		CMP		EAX,0		; 
+   213 00000117 75 71                           		JNE		_asm_end_app		; 
    214 00000119 58                              		POP		EAX
    215 0000011A 61                              		POPAD
    216 0000011B 1F                              		POP		DS
    217 0000011C 07                              		POP		ES
-   218 0000011D 83 C4 04                        		ADD		ESP,4			; INT 0x0d �ł́A���ꂪ�K�v
+   218 0000011D 83 C4 04                        		ADD		ESP,4			; INT 0x0d 
    219 00000120 CF                              		IRETD
    220 00000121                                 
    221 00000121                                 _memtest_sub:	; unsigned int memtest_sub(unsigned int start, unsigned int end)
-   222 00000121 57                              		PUSH	EDI						; �iEBX, ESI, EDI ���g�������̂Łj
+   222 00000121 57                              		PUSH	EDI						; 
    223 00000122 56                              		PUSH	ESI
    224 00000123 53                              		PUSH	EBX
    225 00000124 BE AA55AA55                     		MOV		ESI,0xaa55aa55			; pat0 = 0xaa55aa55;

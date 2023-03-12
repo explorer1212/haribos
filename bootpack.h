@@ -1,10 +1,10 @@
 /* asmhead.nas */
 struct BOOTINFO { 
-	char cyls; 
-	char leds; 
-	char vmode;
+	char cyls; /* stop reading the disk */
+	char leds; /* status of LED */
+	char vmode; /* number of bits of color */
 	char reserve;
-	short scrnx, scrny; 
+	short scrnx, scrny; /* resolution */
 	char *vram;
 };
 #define ADR_BOOTINFO	0x00000ff0
@@ -76,24 +76,27 @@ void putblock8_8(char *vram, int vxsize, int pxsize,
 #define COL8_848484		15
 
 /* dsctbl.c */
+/* GDT structure */
 struct SEGMENT_DESCRIPTOR {
 	short limit_low, base_low;
 	char base_mid, access_right;
 	char limit_high, base_high;
 };
+/* IDT structure */
 struct GATE_DESCRIPTOR {
 	short offset_low, selector;
 	char dw_count, access_right;
 	short offset_high;
 };
+/* init gdt and idt */
 void init_gdtidt(void);
 void set_segmdesc(struct SEGMENT_DESCRIPTOR *sd, unsigned int limit, int base, int ar);
 void set_gatedesc(struct GATE_DESCRIPTOR *gd, int offset, int selector, int ar);
-#define ADR_IDT			0x0026f800
+#define ADR_IDT			0x0026f800 /* address of IDT */
 #define LIMIT_IDT		0x000007ff
-#define ADR_GDT			0x00270000
+#define ADR_GDT			0x00270000 /* address of GDT */
 #define LIMIT_GDT		0x0000ffff
-#define ADR_BOTPAK		0x00280000
+#define ADR_BOTPAK		0x00280000 /* address of bootpack.h */
 #define LIMIT_BOTPAK	0x0007ffff
 #define AR_DATA32_RW	0x4092
 #define AR_CODE32_ER	0x409a

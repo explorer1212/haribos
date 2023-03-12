@@ -104,6 +104,16 @@ void putfont8(char *vram, int xsize, int x, int y, char c, char *font)
 	return;
 }
 
+/**
+ * @description: print a string
+ * @param {char} *vram
+ * @param {int} xsize
+ * @param {int} x
+ * @param {int} y
+ * @param {char} c
+ * @param {unsigned char} *s
+ * @return {*}
+ */
 void putfonts8_asc(char *vram, int xsize, int x, int y, char c, unsigned char *s)
 {
 	extern char hankaku[4096];
@@ -114,6 +124,12 @@ void putfonts8_asc(char *vram, int xsize, int x, int y, char c, unsigned char *s
 	return;
 }
 
+/**
+ * @description: 
+ * @param {char} *mouse
+ * @param {char} bc
+ * @return {*}
+ */
 void init_mouse_cursor8(char *mouse, char bc)
 {
 	static char cursor[16][16] = {
@@ -152,8 +168,20 @@ void init_mouse_cursor8(char *mouse, char bc)
 	return;
 }
 
-void putblock8_8(char *vram, int vxsize, int pxsize,
-	int pysize, int px0, int py0, char *buf, int bxsize)
+
+/**
+ * @description: copy the content of the picture to the address
+ * @param {char} *vram : about vram
+ * @param {int} vxsize
+ * @param {int} pxsize : xsize of the picture
+ * @param {int} pysize : ysize of the picture
+ * @param {int} px0 : xposition to show on the screen
+ * @param {int} py0 : yposition to show on the screen
+ * @param {char} *buf : address of the picture
+ * @param {int} bxsize : pixels each row contains
+ * @return {*}
+ */
+void putblock8_8(char *vram, int vxsize, int pxsize, int pysize, int px0, int py0, char *buf, int bxsize)
 {
 	int x, y;
 	for (y = 0; y < pysize; y++) {
