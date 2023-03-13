@@ -1,6 +1,28 @@
 # HariOS
 
-进入32位保护模式，进入内核后，初始化GDT、IDT、PIC，打开中断。
+​	进入32位保护模式，进入内核后，初始化GDT、IDT、PIC，打开中断。
+
+## 功能
+
+### 1、中断
+
+​	以_asm_handler21为例，将函数注册到IDT中，当遇到中断时，PIC向CPU发送2个字节的数据0xcd,0xxx，0xcd就是INT，以此让CPU把数据当作命令来执行来产生中断，调用这个汇编函数。该汇编函数保存好寄存器并设置好DS、ES段寄存器后，调用\_handler21（C程序）来处理程序。
+
+#### 键盘中断
+
+​	向0x64读数据，看位1是否为0，为0代表键盘控制电路准备完毕，然后进行模式设定。向0x60端口写入0x47，代表利用鼠标模式。
+
+##### 键盘信息的解码
+
+#### 鼠标中断
+
+​	向键盘控制电路发送指令0xd4，下一个数据会发送给鼠标，发送激活指令后，正确的话会返回0xfa。
+
+##### 鼠标信息的解码
+
+​	每次移动鼠标，数据包含3个字节。第0个字节与移动、点击还是滑轮有关，第1个字节与左右移动有关，第2个字节与上下移动有关。
+
+
 
 ## 目录结构
 
@@ -14,7 +36,11 @@
 
 ### asmhead.nas
 
-启动内核的汇编程序，0x7c00
+启动内核的汇编程序，0x7c00，
+
+#### 开启32位保护模式
+
+打开A20地址线，
 
 ### naskfunc.nas
 
@@ -86,13 +112,49 @@ void set_gatedesc(struct GATE_DESCRIPTOR *gd, int offset, int selector, int ar);
 #define AR_INTGATE32	0x008e
 ```
 
+### keyboard.c
+
+```c
+void inthandler21(int *esp);
+void wait_KBC_sendready(void);
+void init_keyboard(struct FIFO32 *fifo, int data0);
+#define PORT_KEYDAT		0x0060
+#define PORT_KEYCMD		0x0064
+```
+
+### mouse.c
+
+```c
+struct MOUSE_DEC {
+	unsigned char buf[3], phase;
+	int x, y, btn;
+};
+void inthandler2c(int *esp);
+void enable_mouse(struct FIFO32 *fifo, int data0, struct MOUSE_DEC *mdec);
+int mouse_decode(struct MOUSE_DEC *mdec, unsigned char dat);
+```
+
+### fifo.c
+
+缓冲区，用来存储中断产生的信息等等。
+
+```c
+struct FIFO32 {
+	int *buf;
+	int p, q, size, free, flags;
+	struct TASK *task;
+};
+void fifo32_init(struct FIFO32 *fifo, int size, int *buf, struct TASK *task);
+int fifo32_put(struct FIFO32 *fifo, int data);
+int fifo32_get(struct FIFO32 *fifo);
+int fifo32_status(struct FIFO32 *fifo);
+```
 
 
-## 功能
 
-### 1、中断
+#### 
 
-以_asm_handler21为例，将函数注册到IDT中，当遇到中断时，PIC向CPU发送2个字节的数据0xcd,0xxx，0xcd就是INT，以此让CPU把数据当作命令来执行来产生中断，调用这个汇编函数。该汇编函数保存好寄存器并设置好DS、ES段寄存器后，调用\_handler21（C程序）来处理程序。
+
 
 
 

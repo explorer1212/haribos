@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-01-03 13:45:12
- * @LastEditTime: 2023-01-07 19:32:55
- * @FilePath: \helloos0\keyboard.c
+ * @LastEditTime: 2023-03-12 20:25:23
+ * @FilePath: \配书源码和工具c:\Users\马俊腾\Documents\A_program\30天自制操作系统\tolset\helloos0\keyboard.c
  * @Description: 
  * 
  */
@@ -13,7 +13,7 @@ int keydata0;
 void inthandler21(int *esp)
 {
 	int data;
-	io_out8(PIC0_OCW2, 0x61);	
+	io_out8(PIC0_OCW2, 0x61); /* inform pic */
 	data = io_in8(PORT_KEYDAT);
 	fifo32_put(keyfifo, data + keydata0);
 	return;

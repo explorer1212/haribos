@@ -89,21 +89,21 @@ keystatus:
 		INT		0x16 			; keyboard BIOS
 		MOV		[LEDS],AL
 
-; PICが一切の割り込みを受け付けないようにする
-;	AT互換機の仕様では、PICの初期化をするなら、
-;	こいつをCLI前にやっておかないと、たまにハングアップする
-;	PICの初期化はあとでやる
+; init PIC: close all interrupt
 
 		MOV		AL,0xff
 		OUT		0x21,AL
-		NOP						; OUT命令を連続させるとうまくいかない機種があるらしいので
+		NOP						
 		OUT		0xa1,AL
 
-		CLI						; さらにCPUレベルでも割り込み禁止
+		CLI						
 
 ; 为了让CPU能够访问1MB以上的内存空间，设定A20GATE
 
 		CALL	waitkbdout
+        ; in al,0x92                                   ;南桥芯片内的端口
+        ; or al,0000_0010B
+        ; out 0x92,al                                  ;打开A20
 		MOV		AL,0xd1
 		OUT		0x64,AL
 		CALL	waitkbdout

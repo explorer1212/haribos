@@ -213,7 +213,7 @@ void HariMain(void)
 					io_out8(PORT_KEYDAT, keycmd_wait);
 				}
 			} else if (512 <= i && i <= 767) { 
-				if (mouse_decode(&mdec, i - 512) != 0) {
+				if (mouse_decode(&mdec, i - 512) != 0) { /* mouse */
 					mx += mdec.x;
 					my += mdec.y;
 					if (mx < 0) { mx = 0; }
