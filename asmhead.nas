@@ -101,14 +101,9 @@ keystatus:
 ; 为了让CPU能够访问1MB以上的内存空间，设定A20GATE
 
 		CALL	waitkbdout
-        ; in al,0x92                                   ;南桥芯片内的端口
-        ; or al,0000_0010B
-        ; out 0x92,al                                  ;打开A20
-		MOV		AL,0xd1
-		OUT		0x64,AL
-		CALL	waitkbdout
-		MOV		AL,0xdf			; enable A20
-		OUT		0x60,AL
+        in al,0x92                                   ;南桥芯片内的端口
+        or al,0000_0010B
+        out 0x92,al                                  ;打开A20
 		CALL	waitkbdout
 
 ; 切换到保护模式
