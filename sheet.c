@@ -294,8 +294,8 @@ void sheet_refreshmap(struct SHTCTL *ctl, int vx0, int vy0, int vx1, int vy1, in
 void sheet_free(struct SHEET *sht)
 {
 	if (sht->height >= 0) {
-		sheet_updown(sht, -1); /* �\�����Ȃ�܂���\���ɂ��� */
+		sheet_updown(sht, -1); 
 	}
-	sht->flags = 0; /* ���g�p�}�[�N */
+	sht->flags = 0; 
 	return;
 }

@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-01-08 20:58:20
- * @LastEditTime: 2023-01-28 15:43:07
- * @FilePath: \helloos0\mtask.c
+ * @LastEditTime: 2023-03-15 12:59:23
+ * @FilePath: \配书源码和工具c:\Users\马俊腾\Documents\A_program\30天自制操作系统\tolset\helloos0\mtask.c
  * @Description: 
  * 
  */
@@ -64,7 +64,7 @@ void task_remove(struct TASK *task)
 }
 
 /**
- * @description: find the top level and switch it 
+ * @description: choose a level to switch 
  * @return {*}
  */
 void task_switchsub(void)
@@ -81,7 +81,7 @@ void task_switchsub(void)
     return;
 }
 
-
+/* 闲置任务 */
 void task_idle(void)
 {
     for (;;) {
@@ -117,6 +117,8 @@ struct TASK *task_init(struct MEMMAN *memman)
     task_timer = timer_alloc();
     timer_settime(task_timer, task->priority);
 
+
+    /* 闲置任务 */
 	idle = task_alloc();
 	idle->tss.esp = memman_alloc_4k(memman, 64 * 1024) + 64 * 1024;
 	idle->tss.eip = (int) &task_idle;

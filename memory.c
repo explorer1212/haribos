@@ -17,7 +17,7 @@ unsigned int memtest(unsigned int start, unsigned int end)
 	eflg |= EFLAGS_AC_BIT; /* AC-bit = 1 */
 	io_store_eflags(eflg);
 	eflg = io_load_eflags();
-	if ((eflg & EFLAGS_AC_BIT) != 0) { /* 386?¿½Å‚ï¿½AC=1?¿½É‚ï¿½?¿½Ä‚ï¿½?¿½?¿½?¿½?¿½?¿½?¿½0?¿½É–ß‚ï¿½?¿½Ä‚ï¿½?¿½Ü‚ï¿½ */
+	if ((eflg & EFLAGS_AC_BIT) != 0) {
 		flg486 = 1;
 	}
 	eflg &= ~EFLAGS_AC_BIT; /* AC-bit = 0 */
@@ -25,7 +25,7 @@ unsigned int memtest(unsigned int start, unsigned int end)
 
 	if (flg486 != 0) {
 		cr0 = load_cr0();
-		cr0 |= CR0_CACHE_DISABLE; /* ?¿½L?¿½?¿½?¿½b?¿½V?¿½?¿½?¿½ÖŽ~ */
+		cr0 |= CR0_CACHE_DISABLE; 
 		store_cr0(cr0);
 	}
 
@@ -33,7 +33,7 @@ unsigned int memtest(unsigned int start, unsigned int end)
 
 	if (flg486 != 0) {
 		cr0 = load_cr0();
-		cr0 &= ~CR0_CACHE_DISABLE; /* ?¿½L?¿½?¿½?¿½b?¿½V?¿½?¿½?¿½?¿½?¿½?¿½ */
+		cr0 &= ~CR0_CACHE_DISABLE; 
 		store_cr0(cr0);
 	}
 
@@ -42,10 +42,10 @@ unsigned int memtest(unsigned int start, unsigned int end)
 
 void memman_init(struct MEMMAN *man)
 {
-	man->frees = 0;			
-	man->maxfrees = 0;
-	man->lostsize = 0;
-	man->losts = 0;			
+	man->frees = 0;	/* å¯ç”¨ä¿¡æ¯æ•°ç›® */	
+	man->maxfrees = 0; /* freesçš„æœ€å¤§å€¼ */
+	man->lostsize = 0; /* é‡Šæ”¾å¤±è´¥çš„å†…å­˜å¤§å°æ€»å’Œ */
+	man->losts = 0; /* é‡Šæ”¾å¤±è´¥æ¬¡æ•° */
 	return;
 }
 

@@ -53,8 +53,8 @@ void HariMain(void)
 	init_pit();
 	init_keyboard(&fifo, 256);
 	enable_mouse(&fifo, 512, &mdec);
-	io_out8(PIC0_IMR, 0xf8); /* PIT��PIC1�ƃL�[�{�[�h������(11111000) */
-	io_out8(PIC1_IMR, 0xef); /* �}�E�X������(11101111) */
+	io_out8(PIC0_IMR, 0xf8); 
+	io_out8(PIC1_IMR, 0xef); 
 	fifo32_init(&keycmd, 32, keycmd_buf, 0);
 
 	memtotal = memtest(0x00400000, 0xbfffffff);
@@ -72,7 +72,7 @@ void HariMain(void)
 	/* sht_back */
 	sht_back  = sheet_alloc(shtctl);
 	buf_back  = (unsigned char *) memman_alloc_4k(memman, binfo->scrnx * binfo->scrny);
-	sheet_setbuf(sht_back, buf_back, binfo->scrnx, binfo->scrny, -1); /* �����F�Ȃ� */
+	sheet_setbuf(sht_back, buf_back, binfo->scrnx, binfo->scrny, -1); 
 	init_screen8(buf_back, binfo->scrnx, binfo->scrny);
 
 	/* sht_cons */
@@ -82,7 +82,7 @@ void HariMain(void)
 	sht_mouse = sheet_alloc(shtctl);
 	sheet_setbuf(sht_mouse, buf_mouse, 16, 16, 99);
 	init_mouse_cursor8(buf_mouse, 99);
-	mx = (binfo->scrnx - 16) / 2; /* ��ʒ����ɂȂ�悤�ɍ��W�v�Z */
+	mx = (binfo->scrnx - 16) / 2; /* 中央坐标 */
 	my = (binfo->scrny - 28 - 16) / 2;
 
 	sheet_slide(sht_back,  0,  0);
@@ -155,16 +155,16 @@ void HariMain(void)
 					key_win = shtctl->sheets[j];
 					keywin_on(key_win);
 				}
-				if (i == 256 + 0x2a) {	/* ���V�t�g ON */
+				if (i == 256 + 0x2a) {	/* left shift ON */
 					key_shift |= 1;
 				}
-				if (i == 256 + 0x36) {	/* �E�V�t�g ON */
+				if (i == 256 + 0x36) {	/* right shift ON */
 					key_shift |= 2;
 				}
-				if (i == 256 + 0xaa) {	/* ���V�t�g OFF */
+				if (i == 256 + 0xaa) {	/* left shift OFF */
 					key_shift &= ~1;
 				}
-				if (i == 256 + 0xb6) {	/* �E�V�t�g OFF */
+				if (i == 256 + 0xb6) {	/* right shift OFF */
 					key_shift &= ~2;
 				}
 				if (i == 256 + 0x3a) {	/* CapsLock */
@@ -182,18 +182,18 @@ void HariMain(void)
 					fifo32_put(&keycmd, KEYCMD_LED);
 					fifo32_put(&keycmd, key_leds);
 				}
-				if (i == 256 + 0x3b && key_shift != 0 && key_win != 0) { /* shift f1 */
+				if (i == 256 + 0x3b && key_shift != 0 && key_win != 0) { /* shift+f1 */
 					task = key_win->task;
-					if (task != 0 && task->tss.ss0 != 0) {	/* Shift+F1 */
+					if (task != 0 && task->tss.ss0 != 0) {	/* close a preocess */
 						cons_putstr0(task->cons, "\nBreak(key) :\n");
-						io_cli();	/* �����I���������Ƀ^�X�N���ς��ƍ��邩�� */
+						io_cli();	
 						task->tss.eax = (int) &(task->tss.esp0);
 						task->tss.eip = (int) asm_end_app;
 						io_sti();
 						task_run(task, -1, 0);
 					}
 				}
-				if (i == 256 + 0x3c && key_shift != 0) {	/* Shift+F2 */
+				if (i == 256 + 0x3c && key_shift != 0) {	/* Shift+F2: add a console */
 					if (key_win != 0) {
 						keywin_off(key_win);
 					}
@@ -247,7 +247,7 @@ void HariMain(void)
 											if ((sht->flags & 0x10) != 0) { /* application */
 												task = sht->task;
 												cons_putstr0(task->cons, "\nBreak(mouse) :\n");
-												io_cli();	/* �����I���������Ƀ^�X�N���ς��ƍ��邩�� */
+												io_cli();	
 												task->tss.eax = (int) &(task->tss.esp0);
 												task->tss.eip = (int) asm_end_app;
 												io_sti();
@@ -277,7 +277,7 @@ void HariMain(void)
 					} else {
 						mmx = -1;
 						if (new_wx != 0x7fffffff) {
-							sheet_slide(sht, new_wx, new_wy);	/* ��x�m�肳���� */
+							sheet_slide(sht, new_wx, new_wy);	
 							new_wx = 0x7fffffff;
 						}
 					}
@@ -299,7 +299,7 @@ void keywin_off(struct SHEET *key_win)
 {
 	change_wtitle8(key_win, 0);
 	if ((key_win->flags & 0x20) != 0) {
-		fifo32_put(&key_win->task->fifo, 3); /* �R���\�[���̃J�[�\��OFF */
+		fifo32_put(&key_win->task->fifo, 3); 
 	}
 	return;
 }
@@ -308,7 +308,7 @@ void keywin_on(struct SHEET *key_win)
 {
 	change_wtitle8(key_win, 1);
 	if ((key_win->flags & 0x20) != 0) {
-		fifo32_put(&key_win->task->fifo, 2); /* �R���\�[���̃J�[�\��ON */
+		fifo32_put(&key_win->task->fifo, 2); 
 	}
 	return;
 }
@@ -320,7 +320,7 @@ struct SHEET *open_console(struct SHTCTL *shtctl, unsigned int memtotal)
 	unsigned char *buf = (unsigned char *) memman_alloc_4k(memman, 256 * 165);
 	struct TASK *task = task_alloc();
 	int *cons_fifo = (int *) memman_alloc_4k(memman, 128 * 4);
-	sheet_setbuf(sht, buf, 256, 165, -1); /* �����F�Ȃ� */
+	sheet_setbuf(sht, buf, 256, 165, -1); 
 	make_window8(buf, 256, 165, "console", 0);
 	make_textbox8(sht, 8, 28, 240, 128, COL8_000000);
 	task->cons_stack = memman_alloc_4k(memman, 64 * 1024);
@@ -336,7 +336,7 @@ struct SHEET *open_console(struct SHTCTL *shtctl, unsigned int memtotal)
 	*((int *) (task->tss.esp + 8)) = memtotal;
 	task_run(task, 2, 2); /* level=2, priority=2 */
 	sht->task = task;
-	sht->flags |= 0x20;	/* �J�[�\������ */
+	sht->flags |= 0x20;	
 	fifo32_init(&task->fifo, 128, cons_fifo, task);
 	return sht;
 }

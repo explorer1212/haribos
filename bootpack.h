@@ -155,15 +155,17 @@ int memman_free_4k(struct MEMMAN *man, unsigned int addr, unsigned int size);
 /* sheet.c */
 #define MAX_SHEETS		256
 struct SHEET {
+	/* buf是用来记录图层上所画内容的地址，vx0和vy0是图层在画面上的坐标，col_inv是透明色色号
+		height是图层高度。 */
 	unsigned char *buf;
 	int bxsize, bysize, vx0, vy0, col_inv, height, flags;
 	struct SHTCTL *ctl;
 	struct TASK *task;
 };
 struct SHTCTL {
-	unsigned char *vram, *map;
-	int xsize, ysize, top;
-	struct SHEET *sheets[MAX_SHEETS];
+	unsigned char *vram, *map; /* xsize, ysize代表画面的大小 */
+	int xsize, ysize, top; /* top代表最上面图层的高度 */
+	struct SHEET *sheets[MAX_SHEETS]; /* 对sheets0的排序 */
 	struct SHEET sheets0[MAX_SHEETS];
 };
 struct SHTCTL *shtctl_init(struct MEMMAN *memman, unsigned char *vram, int xsize, int ysize);
